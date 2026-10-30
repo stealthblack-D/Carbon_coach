@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carbon Coach 🌱 - DevFest 2026</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+  <!-- TOP NAVIGATION HEADER -->
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">🌱</span>
+        <div>
+          <h1 class="text-xl font-bold bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
+            Carbon Coach
+          </h1>
+          <p class="text-xs text-slate-400">DevFest 2026 Hackathon • Google ADK Powered</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Campus Group Selector -->
+        <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+          <span class="text-xs text-slate-400">Campus Group:</span>
+          <select id="campusGroupSelect" class="bg-transparent text-xs font-semibold text-emerald-400 focus:outline-none cursor-pointer">
+            <option value="Hostel Cauvery" class="bg-slate-900 text-white">Hostel Cauvery</option>
+            <option value="Hostel Krishna" class="bg-slate-900 text-white">Hostel Krishna</option>
+            <option value="Hostel Godavari" class="bg-slate-900 text-white">Hostel Godavari</option>
+            <option value="Hostel Ganga" class="bg-slate-900 text-white">Hostel Ganga</option>
+            <option value="Dept of CSE" class="bg-slate-900 text-white">Dept of CSE</option>
+            <option value="Dept of ECE" class="bg-slate-900 text-white">Dept of ECE</option>
+            <option value="Dept of Mech" class="bg-slate-900 text-white">Dept of Mech</option>
+          </select>
+        </div>
+
+        <!-- Language Pill Switcher -->
+        <div class="flex items-center bg-slate-800 rounded-lg p-1 border border-slate-700 text-xs">
+          <button id="langEn" class="px-2.5 py-1 rounded font-medium bg-emerald-600 text-white transition">EN</button>
+          <button id="langTe" class="px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition">తెలుగు</button>
+          <button id="langHi" class="px-2.5 py-1 rounded font-medium text-slate-400 hover:text-white transition">हिन्दी</button>
+        </div>
+
+        <!-- Reset Button -->
+        <button id="clearBtn" title="Reset Session" class="text-slate-400 hover:text-rose-400 text-xs px-2.5 py-1.5 rounded border border-slate-700 hover:border-rose-500/50 transition">
+          🔄 Reset
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT COLUMN: STATS & CHARTS (5 Cols) -->
+    <div class="lg:col-span-5 flex flex-col gap-5">
+      
+      <!-- METRICS GRID -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 backdrop-blur">
+          <span class="text-xs text-slate-400 font-medium">Session Total</span>
+          <div class="flex items-baseline gap-1 mt-1">
+            <span id="statTotalEmissions" class="text-2xl font-bold text-emerald-400">0.00</span>
+            <span class="text-xs text-slate-400">kg CO₂e</span>
+          </div>
+          <span id="statActivitiesCount" class="text-[11px] text-slate-400 mt-1 block">0 activities logged</span>
+        </div>
+
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 backdrop-blur">
+          <span class="text-xs text-slate-400 font-medium">Daily Target</span>
+          <div class="flex items-baseline gap-1 mt-1">
+            <span id="statBenchmark" class="text-2xl font-bold text-cyan-400">5.50</span>
+            <span class="text-xs text-slate-400">kg Paris 1.5°C</span>
+          </div>
+          <span id="statBenchmarkStatus" class="text-[11px] text-emerald-400 mt-1 block">Within budget 🌿</span>
+        </div>
+      </div>
+
+      <!-- CATEGORY BREAKDOWN CHART -->
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-sm font-semibold text-slate-200">Emissions Breakdown</h2>
+          <span class="text-xs text-slate-400">By Category</span>
+        </div>
+        <div class="h-48 flex items-center justify-center relative">
+          <canvas id="categoryChart"></canvas>
+          <div id="chartPlaceholder" class="text-center text-xs text-slate-500 absolute">
+            Start talking to log activities<br>and visualize your footprint
+          </div>
+        </div>
+      </div>
+
+      <!-- CAMPUS LEADERBOARD PREVIEW -->
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 flex-1 flex flex-col">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-1.5">
+            🏆 Campus Leaderboard
+          </h2>
+          <span class="text-[11px] text-slate-400">Per Capita (kg/day)</span>
+        </div>
+        <div id="leaderboardList" class="space-y-2 text-xs flex-1 overflow-y-auto max-h-56 pr-1">
+          <!-- Populated by JS -->
+          <div class="text-slate-500 text-center py-4">Loading campus leaderboard...</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: CHAT & TOOLS (7 Cols) -->
+    <div class="lg:col-span-7 flex flex-col bg-slate-800/40 border border-slate-700/60 rounded-xl overflow-hidden h-[750px]">
+      
+      <!-- CHAT HEADER & QUICK CHIPS -->
+      <div class="border-b border-slate-700/60 bg-slate-800/60 p-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Conversational Agent • Google ADK
+          </span>
+          <span class="text-[11px] text-slate-400">No made-up numbers • 100% Tool Driven</span>
+        </div>
+
+        <!-- QUICK PROMPT CHIPS -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs whitespace-nowrap scrollbar-thin">
+          <button class="chip px-2.5 py-1 rounded-full bg-slate-700/80 hover:bg-emerald-600/30 border border-slate-600 hover:border-emerald-500 text-slate-300 transition"
+                  data-prompt="I travelled 12 km by bus today and used the AC for 4 hours.">
+            🚌 12km Bus & 4h AC
+          </button>
+          <button class="chip px-2.5 py-1 rounded-full bg-slate-700/80 hover:bg-emerald-600/30 border border-slate-600 hover:border-emerald-500 text-slate-300 transition"
+                  data-prompt="Had chicken biryani for lunch and rode bike 10 km.">
+            🍗 Chicken Biryani & 10km Bike
+          </button>
+          <button class="chip px-2.5 py-1 rounded-full bg-slate-700/80 hover:bg-emerald-600/30 border border-slate-600 hover:border-emerald-500 text-slate-300 transition"
+                  data-prompt="How did I do this week? Show my summary.">
+            📊 Weekly Summary
+          </button>
+          <button class="chip px-2.5 py-1 rounded-full bg-slate-700/80 hover:bg-emerald-600/30 border border-slate-600 hover:border-emerald-500 text-slate-300 transition"
+                  data-prompt="Show campus hostel leaderboard">
+            🏆 Leaderboard
+          </button>
+          <button class="chip px-2.5 py-1 rounded-full bg-slate-700/80 hover:bg-emerald-600/30 border border-slate-600 hover:border-emerald-500 text-slate-300 transition"
+                  data-prompt="నేను ఈరోజు 12 కిమీ బస్సులో ప్రయాణించాను మరియు 4 గంటలు ఏసీ వాడాను.">
+            🇮🇳 తెలుగు Sample
+          </button>
+          <button class="chip px-2.5 py-1 rounded-full bg-slate-700/80 hover:bg-emerald-600/30 border border-slate-600 hover:border-emerald-500 text-slate-300 transition"
+                  data-prompt="मैंने आज 12 किमी बस से यात्रा की और 4 घंटे एसी चलाया।">
+            🇮🇳 हिन्दी Sample
+          </button>
+        </div>
+      </div>
+
+      <!-- CHAT MESSAGE LOG -->
+      <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4">
+        <!-- Welcome message -->
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-full bg-emerald-600/30 border border-emerald-500/40 flex items-center justify-center text-sm">
+            🌱
+          </div>
+          <div class="bg-slate-800 border border-slate-700/80 rounded-2xl rounded-tl-none p-3.5 max-w-[85%] text-sm leading-relaxed text-slate-200">
+            <p class="font-semibold text-emerald-400 mb-1">Hello! I am your Carbon Coach.</p>
+            <p>Tell me what you did today in plain language:</p>
+            <blockquote class="my-2 pl-3 border-l-2 border-emerald-500/50 text-slate-300 italic text-xs">
+              "I travelled 12 km by bus today and used the AC for 4 hours."
+            </blockquote>
+            <p class="text-xs text-slate-400">
+              I will call real Python calculation tools to calculate your emissions using CEA & DEFRA conversion factors, track your history, and help your hostel climb the campus leaderboard!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- INPUT BAR -->
+      <div class="p-3 bg-slate-900/90 border-t border-slate-700/60">
+        <form id="chatForm" class="flex items-center gap-2">
+          <input
+            id="messageInput"
+            type="text"
+            placeholder="Describe your activities (e.g. 12 km by bus and 4 hrs AC)..."
+            class="flex-1 bg-slate-800 border border-slate-700 focus:border-emerald-500 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-400 focus:outline-none transition"
+            autocomplete="off"
+            required
+          />
+          <button
+            type="submit"
+            id="sendBtn"
+            class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm px-5 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-emerald-900/30"
+          >
+            <span>Send</span>
+            <span>🚀</span>
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 py-3 text-center text-xs text-slate-500">
+    DevFest 2026 Hackathon • Google ADK Multi-Agent Architecture • Verified CEA & DEFRA Factors
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

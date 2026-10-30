@@ -1,0 +1,78 @@
+{
+  "eval_set_name": "carbon_coach_golden_eval_set",
+  "version": "1.0",
+  "description": "Evaluation cases for DevFest 2026 Carbon Coach agent",
+  "cases": [
+    {
+      "id": "case_1_bus_and_ac",
+      "user_input": "I travelled 12 km by bus today and used the AC for 4 hours.",
+      "expected_tools": [
+        "calculate_travel_emissions",
+        "calculate_electricity_emissions",
+        "log_activity"
+      ],
+      "expected_emissions": {
+        "bus_12km": 0.984,
+        "ac_4hours": 3.4224,
+        "total": 4.4064
+      },
+      "expected_sources": [
+        "DEFRA",
+        "Central Electricity Authority"
+      ]
+    },
+    {
+      "id": "case_2_food_and_bike",
+      "user_input": "I had a chicken biryani lunch and rode my motorcycle for 15 km.",
+      "expected_tools": [
+        "calculate_food_emissions",
+        "calculate_travel_emissions",
+        "log_activity"
+      ],
+      "expected_emissions": {
+        "chicken_lunch": 2.60,
+        "bike_15km": 0.675,
+        "total": 3.275
+      }
+    },
+    {
+      "id": "case_3_weekly_summary",
+      "user_input": "How did I do this week?",
+      "expected_tools": [
+        "get_summary"
+      ]
+    },
+    {
+      "id": "case_4_reduction_suggestions",
+      "user_input": "How can I cut my electricity emissions?",
+      "expected_tools": [
+        "suggest_reductions"
+      ]
+    },
+    {
+      "id": "case_5_campus_leaderboard",
+      "user_input": "Show me the campus hostel leaderboard. Which hostel is winning?",
+      "expected_tools": [
+        "get_campus_leaderboard"
+      ]
+    },
+    {
+      "id": "case_6_telugu_query",
+      "user_input": "నేను ఈరోజు 12 కిమీ బస్సులో ప్రయాణించాను మరియు 4 గంటలు ఏసీ వాడాను.",
+      "expected_language": "te",
+      "expected_tools": [
+        "calculate_travel_emissions",
+        "calculate_electricity_emissions"
+      ]
+    },
+    {
+      "id": "case_7_hindi_query",
+      "user_input": "मैंने आज 12 किमी बस से यात्रा की और 4 घंटे एसी चलाया।",
+      "expected_language": "hi",
+      "expected_tools": [
+        "calculate_travel_emissions",
+        "calculate_electricity_emissions"
+      ]
+    }
+  ]
+}
